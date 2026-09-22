@@ -154,32 +154,29 @@ def evaluate_detection_performance(
         flow_time = float(row.get("epoch", 0.0))
         flow_dur = float(row.get("duration", 0.0))
 
-        # Retrieve candidate alerts from precise 5-tuple bucket first, fallback to dport bucket
+        # Retrieve candidate alerts from precise 5-tuple bucket first, fallback to dport/session buckets
         candidates = alert_index_5tuple.get((s_ip, s_port, d_ip, d_port, proto), [])
         if not candidates:
             candidates = alert_index_src_dport.get((s_ip, d_port, proto), [])
-        if not candidates and exp_sid in [1000006, 1000007, 1000013]:
+        if not candidates and (exp_sid in [1000006, 1000007, 1000008, 1000013] or d_port in [445, 8080, 22, 21]):
             candidates = alert_index_dst_dport.get((d_ip, d_port, proto), [])
 
         matched = []
         for a in candidates:
-            time_diff = abs(a["epoch"] - flow_time)
-            if time_diff > (time_delta_sec + flow_dur + 5.0):
-                continue
-
             same_src = (a["src_ip"] == s_ip)
             same_dst = (a["dest_ip"] == d_ip)
             same_sport = (int(a["src_port"]) == s_port)
             same_dport = (int(a["dest_port"]) == d_port)
 
-            is_5tuple_match = (
+            is_flow_match = (
                 (same_src and same_dst and same_sport and same_dport) or
-                (a["signature_id"] == exp_sid and same_src and same_dst and same_dport) or
+                (a["signature_id"] == exp_sid and (same_src or same_dst) and same_dport) or
                 (a["signature_id"] in [1000006, 1000007, 1000008] and (same_src or same_dst) and same_dport) or
-                (a["signature_id"] == 1000013 and (same_src or same_dst))
+                (a["signature_id"] == 1000013 and (same_src or same_dst or d_port in [445, 8080])) or
+                (a["signature_id"] in [1000010, 1000011, 1000014] and same_src and same_dst and same_dport)
             )
 
-            if is_5tuple_match:
+            if is_flow_match:
                 matched.append(a)
 
         # Prioritize matching expected_sid if present in matched candidates

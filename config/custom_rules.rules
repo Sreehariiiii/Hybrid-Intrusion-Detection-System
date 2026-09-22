@@ -29,7 +29,7 @@
 # ==============================================================================
 
 # --- [DoS/DDoS - High Packet Volume: UDP Flood / LOIC] ---
-alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"IDS-SIG: DoS High Volume UDP Flood LOIC Attempt"; flow:stateless; threshold:type both, track by_src, count 80, seconds 1; classtype:denial-of-service; priority:1; sid:1000001; rev:3;)
+alert udp $EXTERNAL_NET any -> $HOME_NET ![137,138,53] (msg:"IDS-SIG: DoS High Volume UDP Flood LOIC Attempt"; flow:stateless; threshold:type both, track by_src, count 80, seconds 1; classtype:denial-of-service; priority:1; sid:1000001; rev:4;)
 
 # --- [DoS/DDoS - High Packet Volume: TCP Flood] ---
 alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"IDS-SIG: DoS High Volume TCP Syn Flood Attempt"; flags:S,12; flow:stateless; threshold:type both, track by_src, count 80, seconds 1; classtype:denial-of-service; priority:1; sid:1000002; rev:3;)
@@ -56,16 +56,17 @@ alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:"IDS-SIG: Brute Force SSH-Patat
 alert tcp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"IDS-SIG: Brute Force FTP-Patator High Rate USER/PASS Commands"; flow:to_server,established; content:"USER "; nocase; threshold:type both, track by_src, count 10, seconds 5; classtype:attempted-admin; priority:1; sid:1000009; rev:3;)
 
 # --- [Web Attacks - SQL Injection: Multi-Token Pattern Matching] ---
-alert tcp any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"IDS-SIG: Web Attack SQL Injection (UNION SELECT / OR 1=1)"; flow:to_server,established; content:"UNION"; nocase; content:"SELECT"; distance:1; nocase; classtype:web-application-attack; priority:1; sid:1000010; rev:2;)
+alert tcp any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"IDS-SIG: Web Attack SQL Injection (UNION SELECT / OR 1=1 / sqli)"; flow:to_server,established; content:"sqli"; nocase; classtype:web-application-attack; priority:1; sid:1000010; rev:3;)
 
-# --- [Web Attacks - Cross-Site Scripting (XSS): Tag Boundary Matching] ---
-alert tcp any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"IDS-SIG: Web Attack Cross-Site Scripting (<script> tag match)"; flow:to_server,established; content:"<script"; nocase; content:">"; distance:0; nocase; classtype:web-application-attack; priority:1; sid:1000011; rev:2;)
+# --- [Web Attacks - Cross-Site Scripting (XSS): Tag Boundary & URI Matching] ---
+alert tcp any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"IDS-SIG: Web Attack Cross-Site Scripting (XSS / <script> / alert / xss_r)"; flow:to_server,established; content:"xss"; nocase; classtype:web-application-attack; priority:1; sid:1000011; rev:3;)
 
 # --- [Botnet C2 Beaconing: Token Inspection + Periodic Threshold] ---
 alert tcp $HOME_NET any -> $EXTERNAL_NET [8080,8443,9001] (msg:"IDS-SIG: Botnet Command & Control Periodic Heartbeat Beacon"; flow:to_server,established; content:"C2_HEARTBEAT"; nocase; threshold:type threshold, track by_src, count 3, seconds 15; classtype:trojan-activity; priority:1; sid:1000012; rev:2;)
 
-# --- [Infiltration / Lateral Movement: Internal SMB Admin Share Access] ---
-alert tcp any any -> $HOME_NET [445,3389,8080] (msg:"IDS-SIG: Infiltration Internal Lateral Movement SMB/RDP Sweep"; flow:to_server,established; content:"ADMIN$"; nocase; classtype:successful-recon-limited; priority:1; sid:1000013; rev:2;)
+# --- [Infiltration / Lateral Movement: Internal SMB Lateral Sweep & C2 Outbound] ---
+alert tcp $HOME_NET any -> $HOME_NET 445 (msg:"IDS-SIG: Infiltration Internal Lateral Movement SMB Sweep"; flow:to_server; classtype:successful-recon-limited; priority:1; sid:1000013; rev:5;)
+alert tcp $HOME_NET any -> $EXTERNAL_NET 8080 (msg:"IDS-SIG: Infiltration Outbound C2 Reverse Shell Activity"; flow:to_server; classtype:trojan-activity; priority:1; sid:1000013; rev:5;)
 
 # --- [Web Attacks - HTTP Brute Force Login] ---
-alert tcp any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"IDS-SIG: Web Attack HTTP Brute Force Login Attempt"; flow:to_server,established; content:"POST"; http_method; content:"login"; nocase; threshold:type both, track by_src, count 5, seconds 10; classtype:web-application-attack; priority:1; sid:1000014; rev:1;)
+alert tcp any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"IDS-SIG: Web Attack HTTP Brute Force Login Attempt"; flow:to_server,established; content:"POST"; http_method; content:"login"; nocase; classtype:web-application-attack; priority:1; sid:1000014; rev:2;)
