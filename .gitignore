@@ -1,4 +1,4 @@
-﻿# Python & Bytecode
+# Python & Bytecode
 __pycache__/
 *.py[cod]
 *.class
@@ -35,6 +35,7 @@ logs/eve.json
 logs/suricata.log
 logs/fast.log
 logs/*.log
+database/*.db
 database/*.db-journal
 
 # IDE & OS Files
