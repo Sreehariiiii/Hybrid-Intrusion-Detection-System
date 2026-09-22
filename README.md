@@ -1,4 +1,4 @@
-﻿# 🛡️ Hybrid Intrusion Detection & Attribution System (H-IDS)
+# 🛡️ Hybrid Intrusion Detection & Attribution System (H-IDS)
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110.0-009688.svg)](https://fastapi.tiangolo.com)
@@ -60,8 +60,8 @@ graph TD
 
 ### 2. Clone the Repository
 ```bash
-git clone https://github.com/Sreehariiiii/Hybrid-Intrusion-System.git
-cd Hybrid-Intrusion-System
+git clone https://github.com/Sreehariiiii/Hybrid-Intrusion-Detection-System.git
+cd Hybrid-Intrusion-Detection-System
 ```
 
 ### 3. Install Dependencies
