@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intrusion Detection Telemetry & Analysis</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar-left">
+      <div>
+        <div class="profile-section">
+          <div class="avatar-wrapper">
+            <div class="avatar-placeholder">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <span class="badge-count" id="live-badge-count">0</span>
+          </div>
+          <div>
+            <div class="profile-name">Admin</div>
+            <div class="profile-email">admin@defense.net</div>
+          </div>
+        </div>
+
+        <nav>
+          <ul class="nav-menu">
+            <li><a href="#" class="nav-item active" data-tab="telemetry">⚡ Telemetry & Alerts</a></li>
+            <li><a href="#" class="nav-item" data-tab="metrics">📈 Detection Metrics</a></li>
+            <li><a href="#" class="nav-item" data-tab="confusion">🔲 Confusion Matrix</a></li>
+            <li><a href="#" class="nav-item" data-tab="rules">📜 Rules & Attribution</a></li>
+            <li><a href="#" class="nav-item" data-tab="simulator">💉 Attack Simulator</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:auto;">
+        <button class="sidebar-bottom-btn" id="start-replay-btn">
+          <span>⚡</span> Run Dataset Replay
+        </button>
+        <button id="reset-btn" style="background:#27272a; color:#ef4444; border:1px solid #3f3f46; border-radius:14px; padding:12px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.15s ease;">
+          <span>🔄</span> Reset / Start New Run
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEW CARD (CENTER + RIGHT) -->
+    <div class="main-wrapper">
+      <main class="main-card">
+        
+        <!-- CENTER CANVAS -->
+        <section class="center-canvas">
+          
+          <!-- TOP STATUS HEADER -->
+          <div class="center-header">
+            <div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <h1 class="main-title" id="page-title">Intrusion Telemetry</h1>
+                <span id="engine-status-pill" style="font-size:11px; font-weight:700; padding:3px 8px; border-radius:12px; background:#dcfce7; color:#15803d;">● System Ready</span>
+              </div>
+              <p class="subtitle" id="pcap-subtitle">Loading dataset info...</p>
+            </div>
+            <div class="analysts-group">
+              <div class="analyst-mini-avatar" style="background:#e0f2fe; color:#0284c7;">A1</div>
+              <div class="analyst-mini-avatar" style="background:#fae8ff; color:#a855f7;">A2</div>
+              <div class="analyst-mini-avatar" style="background:#ffedd5; color:#ea580c;">A3</div>
+              <div class="analyst-plus">+</div>
+            </div>
+          </div>
+
+          <!-- REPLAY PROGRESS BANNER (ONLY VISIBLE WHILE PROCESSING) -->
+          <div class="progress-card" id="progress-card">
+            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; color:#111827;">
+              <span id="prog-task-title">Replay Processing...</span>
+              <span id="prog-percent-text">0%</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" id="prog-bar-fill"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; color:#6b7280;" id="prog-details-text">
+              <span>0 / 0 pkts</span>
+              <span>Live Alerts Ingested: 0</span>
+              <span>ETA: Calculating...</span>
+            </div>
+          </div>
+
+          <!-- DATASET COMPOSITION DONUT CHART -->
+          <div class="donut-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <span style="font-size:14px; font-weight:800; color:#1e293b;">Dataset Composition (Clean Normal Traffic vs. Attack Categories)</span>
+              <span style="font-size:11px; color:#64748b;" id="donut-total-caption">Total Flows: --</span>
+            </div>
+            <div class="donut-wrapper">
+              <div class="donut-chart-box" id="donut-chart-div"></div>
+              <div class="donut-legend-box" id="donut-legend-list">
+                <!-- Dynamically populated legend items with % and counts -->
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 1: TELEMETRY & ALERTS -->
+          <div class="tab-content active" id="tab-telemetry">
+            <div class="feed-section">
+              <div class="feed-date-header">
+                <span style="font-size:14px; font-weight:800; color:#1e293b;">Deduplicated Threat Feed</span>
+                <span style="font-size:12px; color:#64748b;" id="feed-count-summary">Loading alerts...</span>
+              </div>
+              <div class="feed-list" id="alerts-feed-list">
+                <!-- Dynamically populated alert items -->
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: METRICS TABLE -->
+          <div class="tab-content" id="tab-metrics">
+            <div class="feed-date-header">
+              <span style="font-size:14px; font-weight:800; color:#1e293b;">Per-Category Detection & False Positive Rate</span>
+            </div>
+            <table class="ids-table" id="metrics-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Flows</th>
+                  <th>TP</th>
+                  <th>FP</th>
+                  <th>TN</th>
+                  <th>FN</th>
+                  <th>Misclassified</th>
+                  <th>Precision</th>
+                  <th>Recall</th>
+                  <th>F1 Score</th>
+                  <th>FAR</th>
+                </tr>
+              </thead>
+              <tbody id="metrics-table-body">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- TAB 3: CONFUSION MATRIX -->
+          <div class="tab-content" id="tab-confusion">
+            <div class="feed-date-header">
+              <span style="font-size:14px; font-weight:800; color:#1e293b;">Multi-Class Detection Matrix</span>
+            </div>
+            <p style="font-size:12px; color:#6b7280; margin-bottom:12px;">
+              Includes the explicit <strong>"No Rule Matched (Missed)"</strong> column for unflagged zero-day attacks.
+            </p>
+            <div id="confusion-matrix-container" style="overflow-x:auto;">
+              <!-- Matrix Table -->
+            </div>
+          </div>
+
+          <!-- TAB 4: RULES & ATTRIBUTION -->
+          <div class="tab-content" id="tab-rules">
+            <div class="feed-date-header">
+              <span style="font-size:14px; font-weight:800; color:#1e293b;">Active Rule Attribution & Fidelity</span>
+            </div>
+            <table class="ids-table" id="attribution-table">
+              <thead>
+                <tr>
+                  <th>SID</th>
+                  <th>Signature Name</th>
+                  <th>TP</th>
+                  <th>FP</th>
+                  <th>Precision</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="attribution-table-body">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- TAB 5: ATTACK SIMULATOR -->
+          <div class="tab-content" id="tab-simulator">
+            <div class="feed-date-header">
+              <span style="font-size:14px; font-weight:800; color:#1e293b;">Replay Attack Injection Simulator</span>
+            </div>
+            <p style="font-size:12px; color:#6b7280;">Constructs real network packets and appends them to the PCAP queue.</p>
+            <div style="background:#f8fafc; padding:20px; border-radius:16px; border:1px solid #e2e8f0; display:flex; flex-direction:column; gap:14px; margin-top:10px;">
+              <div>
+                <label style="font-size:12px; font-weight:700; color:#374151;">Attack Pattern</label>
+                <select id="sim-attack-select" style="width:100%; padding:10px; border-radius:10px; border:1px solid #cbd5e1; margin-top:4px;">
+                  <option value="WebAttack-SQLi">Web Attack - SQL Injection</option>
+                  <option value="WebAttack-XSS">Web Attack - XSS</option>
+                  <option value="DoS-LOIC-UDP">DoS High Volume UDP Flood LOIC</option>
+                  <option value="PortScan-TCP-SYN">Port Scan TCP SYN Probing</option>
+                  <option value="BruteForce-SSH">Brute Force SSH Patator</option>
+                  <option value="Infiltration-SMB">Infiltration SMB Lateral Sweep</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:12px; font-weight:700; color:#374151;">Target Host IP</label>
+                <input id="sim-target-ip" type="text" value="192.168.10.50" style="width:100%; padding:10px; border-radius:10px; border:1px solid #cbd5e1; margin-top:4px;">
+              </div>
+              <button id="sim-inject-btn" style="background:#2563eb; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer;">
+                🚀 Inject & Replay Attack
+              </button>
+              <div id="sim-result-msg" style="font-size:12px; font-weight:600;"></div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- RIGHT ANALYTICS PANEL -->
+        <aside class="sidebar-right">
+          <div>
+            <h2 class="right-title">Threat Distribution</h2>
+            <div class="threat-cat-list" id="threat-distribution-list">
+              <!-- Dynamically populated threat progress bars from DB -->
+            </div>
+          </div>
+
+          <!-- BOUNDED LIVE NOTIFICATION PANEL (NO OVERLAY/TOAST) -->
+          <div class="bounded-stream-panel">
+            <div class="bounded-stream-header">
+              <span>🔔 Live Detection Stream</span>
+              <span style="font-size:10px; color:#10b981; font-weight:700;">● LIVE</span>
+            </div>
+            <div class="bounded-stream-list" id="bounded-stream-list">
+              <div style="font-size:11px; color:#94a3b8; text-align:center; padding:10px;">Waiting for new detections...</div>
+            </div>
+          </div>
+
+          <!-- BOTTOM STATUS / RESOURCE CARD -->
+          <div class="bottom-status-card">
+            <div class="status-card-title">Genuine Suricata 8.0.7</div>
+            <div class="status-card-text" id="engine-status-text">
+              Loading engine telemetry...
+            </div>
+            <div style="font-size:11px; font-weight:700; color:#2563eb;">● Real-Time Live Tail Active</div>
+          </div>
+        </aside>
+
+      </main>
+    </div>
+
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
