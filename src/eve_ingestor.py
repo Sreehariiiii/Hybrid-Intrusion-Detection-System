@@ -163,6 +163,7 @@ def start_suricata_subprocess(
 
         cmd = [
             docker_bin, "run", "--rm",
+            "--name", "suricata_ids_live_engine",
             "--memory=4g",
             "--cpus=4",
             "-v", f"{work_dir}:/work",
@@ -177,6 +178,25 @@ def start_suricata_subprocess(
         return subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
     raise RuntimeError("Neither local suricata nor docker is available.")
+
+
+def stop_suricata_subprocess(proc: subprocess.Popen = None):
+    """Gracefully terminates Suricata background execution without corruption."""
+    docker_bin = shutil.which("docker")
+    if docker_bin:
+        try:
+            subprocess.run([docker_bin, "stop", "-t", "3", "suricata_ids_live_engine"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=6)
+        except Exception:
+            pass
+    if proc and proc.poll() is None:
+        try:
+            proc.terminate()
+            proc.wait(timeout=3)
+        except Exception:
+            try:
+                proc.kill()
+            except Exception:
+                pass
 
 
 def ingest_eve_to_sqlite(

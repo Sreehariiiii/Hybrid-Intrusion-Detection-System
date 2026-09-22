@@ -47,32 +47,28 @@
         <nav>
           <ul class="nav-menu">
             <li>
-              <a href="#" class="nav-item active" data-tab="telemetry">
+              <a href="#" class="nav-item active" data-tab="benchmark">
+                <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span>Accuracy Benchmark</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-item" data-tab="large-traffic">
+                <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                <span>Large Traffic Analysis</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-item" data-tab="telemetry">
                 <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                 </svg>
                 <span>Live Telemetry & Feed</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-item" data-tab="metrics">
-                <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 3v18h18"></path>
-                  <path d="M18 17V9"></path>
-                  <path d="M13 17V5"></path>
-                  <path d="M8 17v-3"></path>
-                </svg>
-                <span>Performance Analytics</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-item" data-tab="confusion">
-                <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="3" y1="9" x2="21" y2="9"></line>
-                  <line x1="9" y1="21" x2="9" y2="9"></line>
-                </svg>
-                <span>Evaluation Matrix</span>
               </a>
             </li>
             <li>
@@ -90,7 +86,8 @@
             <li>
               <a href="#" class="nav-item" data-tab="simulator">
                 <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polygon points="10 8 16 12 10 16 10 8"></polygon>
                 </svg>
                 <span>Attack Injection Engine</span>
               </a>
@@ -100,12 +97,6 @@
       </div>
 
       <div style="display:flex; flex-direction:column; gap:10px; margin-top:auto;">
-        <button class="sidebar-bottom-btn" id="start-replay-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-          </svg>
-          <span>Execute PCAP Ingestion</span>
-        </button>
         <button id="reset-btn" style="background:#27272a; color:#f87171; border:1px solid #3f3f46; border-radius:14px; padding:12px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.15s ease;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="1 4 1 10 7 10"></polyline>
@@ -117,7 +108,7 @@
       </div>
     </aside>
 
-    <!-- MAIN VIEW CARD (CENTER + RIGHT) -->
+    <!-- MAIN VIEW CARD -->
     <div class="main-wrapper">
       <main class="main-card">
         
@@ -128,10 +119,10 @@
           <div class="center-header">
             <div>
               <div style="display:flex; align-items:center; gap:10px;">
-                <h1 class="main-title" id="page-title">Intrusion Telemetry</h1>
-                <span id="engine-status-pill" style="font-size:11px; font-weight:700; padding:3px 8px; border-radius:12px; background:#dcfce7; color:#15803d;">● System Ready</span>
+                <h1 class="main-title" id="page-title">Accuracy Benchmark</h1>
+                <span id="engine-status-pill" style="font-size:11px; font-weight:700; padding:3px 8px; border-radius:12px; background:#dcfce7; color:#15803d;">● Engine Ready</span>
               </div>
-              <p class="subtitle" id="pcap-subtitle">Loading dataset info...</p>
+              <p class="subtitle" id="pcap-subtitle">CICIDS2017 Thursday Ground-Truth Benchmark (6,216 labelled flows)</p>
             </div>
             <div class="analysts-group">
               <div class="analyst-mini-avatar" style="background:#e0f2fe; color:#0284c7;">A1</div>
@@ -141,38 +132,217 @@
             </div>
           </div>
 
-          <!-- REPLAY PROGRESS BANNER (ONLY VISIBLE WHILE PROCESSING) -->
-          <div class="progress-card" id="progress-card">
-            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; color:#111827;">
-              <span id="prog-task-title">Replay Processing...</span>
-              <span id="prog-percent-text">0%</span>
+          <!-- TAB 1: ACCURACY BENCHMARK (6,216 FLOWS) -->
+          <div class="tab-content active" id="tab-benchmark">
+            
+            <!-- BENCHMARK CONTROL HEADER -->
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <div>
+                <div style="font-size:14px; font-weight:800; color:#0f172a;">6,216-Flow Ground-Truth Evaluation Benchmark</div>
+                <div style="font-size:12px; color:#64748b; margin-top:2px;">
+                  Dataset: <strong>CICIDS2017 Thursday</strong> · Total: <strong>6,216 flows</strong> (Benign: 4,000 · Brute Force: 1,507 · XSS: 652 · Infiltration: 36 · SQLi: 21)
+                </div>
+              </div>
+              <button id="btn-run-benchmark" style="background:#2563eb; color:#fff; border:none; padding:10px 18px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 2px 6px rgba(37,99,235,0.3);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span>RUN ACCURACY BENCHMARK</span>
+              </button>
             </div>
-            <div class="progress-bar-wrap">
-              <div class="progress-bar-fill" id="prog-bar-fill"></div>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:11px; color:#6b7280;" id="prog-details-text">
-              <span>0 / 0 pkts</span>
-              <span>Live Alerts Ingested: 0</span>
-              <span>ETA: Calculating...</span>
-            </div>
-          </div>
 
-          <!-- DATASET COMPOSITION DONUT CHART -->
-          <div class="donut-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-              <span style="font-size:14px; font-weight:800; color:#1e293b;">Dataset Composition (Clean Normal Traffic vs. Attack Categories)</span>
-              <span style="font-size:11px; color:#64748b;" id="donut-total-caption">Total Flows: --</span>
+            <!-- METHODOLOGY NOTICE -->
+            <div style="background:#eff6ff; border-left:4px solid #3b82f6; padding:10px 14px; border-radius:6px; font-size:11px; color:#1e40af; margin-bottom:16px;">
+              <strong>Methodology Note:</strong> This is a deterministic rule-based evaluation benchmark. The 6,216 flows are labelled test samples and are <em>not</em> machine learning training data. Scores reflect genuine flow-level classification against current active signatures.
             </div>
-            <div class="donut-wrapper">
-              <div class="donut-chart-box" id="donut-chart-div"></div>
-              <div class="donut-legend-box" id="donut-legend-list">
-                <!-- Dynamically populated legend items with % and counts -->
+
+            <!-- DYNAMIC KPI CARDS -->
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-bottom:16px;">
+              <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:14px;">
+                <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase;">Exact Class Accuracy</div>
+                <div style="font-size:22px; font-weight:800; color:#0f172a; margin-top:4px;" id="bm-accuracy">Not yet verified</div>
+                <div style="font-size:11px; color:#64748b;" id="bm-accuracy-sub">Strict exact-match</div>
+              </div>
+              <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:14px;">
+                <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase;">Attack Detection Rate</div>
+                <div style="font-size:22px; font-weight:800; color:#2563eb; margin-top:4px;" id="bm-behavioural">--</div>
+                <div style="font-size:11px; color:#64748b;">Any attack alert detected</div>
+              </div>
+              <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:14px;">
+                <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase;">Benign Specificity</div>
+                <div style="font-size:22px; font-weight:800; color:#10b981; margin-top:4px;" id="bm-specificity">--</div>
+                <div style="font-size:11px; color:#64748b;" id="bm-far-sub">FAR: --</div>
+              </div>
+              <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:14px;">
+                <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase;">Macro F1-Score</div>
+                <div style="font-size:22px; font-weight:800; color:#8b5cf6; margin-top:4px;" id="bm-macro-f1">--</div>
+                <div style="font-size:11px; color:#64748b;" id="bm-macro-sub">Prec: -- · Rec: --</div>
               </div>
             </div>
+
+            <!-- PER-CATEGORY PERFORMANCE TABLE -->
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-bottom:16px;">
+              <div style="font-size:13px; font-weight:800; color:#0f172a; margin-bottom:12px;">Per-Category Ground-Truth Classification Metrics</div>
+              <table class="ids-table" id="benchmark-metrics-table">
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Flows</th>
+                    <th>Correct (TP)</th>
+                    <th>FP</th>
+                    <th>TN</th>
+                    <th>Missed (FN)</th>
+                    <th>Misclassified</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1 Score</th>
+                    <th>FAR</th>
+                  </tr>
+                </thead>
+                <tbody id="benchmark-metrics-tbody">
+                  <tr><td colspan="11" style="text-align:center; padding:20px; color:#94a3b8;">Click "RUN ACCURACY BENCHMARK" to evaluate.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- MULTI-CLASS CONFUSION MATRIX -->
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-bottom:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <div style="font-size:13px; font-weight:800; color:#0f172a;">Multi-Class Confusion Matrix (Exact sum = 6,216 flows)</div>
+                <div style="font-size:11px; color:#64748b;">Includes explicit "No Rule Matched (Missed)" column</div>
+              </div>
+              <div id="benchmark-confusion-container" style="overflow-x:auto;">
+                <div style="text-align:center; padding:20px; color:#94a3b8;">Evaluation matrix will appear here after benchmark execution.</div>
+              </div>
+            </div>
+
+            <!-- RULE ATTRIBUTION TABLE -->
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:16px;">
+              <div style="font-size:13px; font-weight:800; color:#0f172a; margin-bottom:12px;">Rule-Level Signature Attribution Matrix</div>
+              <table class="ids-table" id="benchmark-attribution-table">
+                <thead>
+                  <tr>
+                    <th>SID</th>
+                    <th>Signature Name</th>
+                    <th>TP Count</th>
+                    <th>FP / Overlap</th>
+                    <th>Precision</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="benchmark-attribution-tbody">
+                  <tr><td colspan="6" style="text-align:center; padding:20px; color:#94a3b8;">Attribution data available after benchmark run.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
           </div>
 
-          <!-- TAB 1: TELEMETRY & ALERTS -->
-          <div class="tab-content active" id="tab-telemetry">
+          <!-- TAB 2: LARGE TRAFFIC / OPERATIONAL ANALYSIS (9.3M PACKETS) -->
+          <div class="tab-content" id="tab-large-traffic">
+            
+            <!-- CONTROL BAR -->
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <div>
+                <div style="font-size:14px; font-weight:800; color:#0f172a;">Full PCAP Operational Replay & Stream Processing</div>
+                <div style="font-size:12px; color:#64748b; margin-top:2px;">
+                  Target Capture: <strong id="large-pcap-label">Thursday-WorkingHours.pcap</strong> (~7.73 GB · 9,322,025 packets)
+                </div>
+              </div>
+              <div style="display:flex; gap:10px;">
+                <button id="btn-start-large-pcap" style="background:#2563eb; color:#fff; border:none; padding:10px 18px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  </svg>
+                  <span>RUN FULL PCAP</span>
+                </button>
+                <button id="btn-stop-large-pcap" style="background:#ef4444; color:#fff; border:none; padding:10px 18px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="6" y="6" width="12" height="12"></rect>
+                  </svg>
+                  <span>STOP GRACEFULLY</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- OPERATIONAL SCOPE NOTICE -->
+            <div style="background:#fffbeb; border-left:4px solid #f59e0b; padding:10px 14px; border-radius:6px; font-size:11px; color:#92400e; margin-bottom:16px;">
+              <strong>Operational Scope Notice:</strong> This analysis measures genuine engine throughput, packet decoding speed, and real-time alert generation across millions of packets. It is <em>not</em> an accuracy benchmark.
+            </div>
+
+            <!-- LIVE TELEMETRY PROGRESS -->
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-bottom:16px;" id="large-progress-card">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:13px; font-weight:800; color:#0f172a;">Processing Telemetry</span>
+                  <span id="large-status-badge" style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; background:#f1f5f9; color:#475569;">Idle</span>
+                </div>
+                <span id="large-pct-text" style="font-size:14px; font-weight:800; color:#2563eb;">0.0%</span>
+              </div>
+              <div class="progress-bar-wrap" style="margin-bottom:10px;">
+                <div class="progress-bar-fill" id="large-bar-fill" style="width:0%;"></div>
+              </div>
+              <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; font-size:11px; color:#475569;">
+                <div>Packets: <strong id="large-pkts-text">0 / 9,322,025</strong></div>
+                <div>Throughput: <strong id="large-tp-text">0 pkts/s (0.0 MB/s)</strong></div>
+                <div>Runtime: <strong id="large-time-text">0.0s (ETA: 0.0s)</strong></div>
+                <div>Resource: <strong id="large-res-text">CPU: 0% · RAM: 0 MB</strong></div>
+              </div>
+            </div>
+
+            <!-- LIVE CHARTS: CIRCULAR CHART & LIVE THREAT SUMMARY -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:16px;">
+              
+              <!-- CIRCULAR CHART (ALERTS BY SEVERITY / CATEGORY) -->
+              <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:16px;">
+                <div style="font-size:13px; font-weight:800; color:#0f172a; margin-bottom:10px;">Live Alert Severity Composition</div>
+                <div id="large-circular-chart" style="height:200px; display:flex; align-items:center; justify-content:center;">
+                  <div style="font-size:12px; color:#94a3b8;">No alerts generated yet</div>
+                </div>
+              </div>
+
+              <!-- LIVE METRICS COUNTER CARDS -->
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:12px;">
+                  <div style="font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase;">Total Alerts</div>
+                  <div style="font-size:20px; font-weight:800; color:#0f172a; margin-top:2px;" id="large-stat-total">0</div>
+                </div>
+                <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:12px;">
+                  <div style="font-size:10px; font-weight:700; color:#dc2626; text-transform:uppercase;">High / Critical</div>
+                  <div style="font-size:20px; font-weight:800; color:#dc2626; margin-top:2px;" id="large-stat-high">0</div>
+                </div>
+                <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:12px;">
+                  <div style="font-size:10px; font-weight:700; color:#ea580c; text-transform:uppercase;">Medium / Warning</div>
+                  <div style="font-size:20px; font-weight:800; color:#ea580c; margin-top:2px;" id="large-stat-med">0</div>
+                </div>
+                <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:12px;">
+                  <div style="font-size:10px; font-weight:700; color:#3b82f6; text-transform:uppercase;">Low / Info</div>
+                  <div style="font-size:20px; font-weight:800; color:#3b82f6; margin-top:2px;" id="large-stat-low">0</div>
+                </div>
+                <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:12px;">
+                  <div style="font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase;">Unique Signatures</div>
+                  <div style="font-size:20px; font-weight:800; color:#0f172a; margin-top:2px;" id="large-stat-sigs">0</div>
+                </div>
+                <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:12px;">
+                  <div style="font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase;">Packet Drops</div>
+                  <div style="font-size:20px; font-weight:800; color:#0f172a; margin-top:2px;" id="large-stat-drops">0</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- FINAL OPERATIONAL ANALYSIS REPORT (UPON COMPLETION OR GRACEFUL STOP) -->
+            <div id="large-report-card" style="display:none; background:#fff; border:1px solid #cbd5e1; border-radius:12px; padding:18px;">
+              <div style="font-size:14px; font-weight:800; color:#0f172a; margin-bottom:12px;">Full PCAP Operational Analysis Report</div>
+              <div id="large-report-content" style="font-family:monospace; font-size:12px; line-height:1.6; background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+                <!-- Dynamically populated report details -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- TAB 3: TELEMETRY & ALERTS -->
+          <div class="tab-content" id="tab-telemetry">
             <div class="feed-section">
               <div class="feed-date-header">
                 <span style="font-size:14px; font-weight:800; color:#1e293b;">Deduplicated Threat Feed</span>
@@ -184,66 +354,14 @@
             </div>
           </div>
 
-          <!-- TAB 2: METRICS TABLE -->
-          <div class="tab-content" id="tab-metrics">
-            <div class="feed-date-header">
-              <span style="font-size:14px; font-weight:800; color:#1e293b;">Per-Category Detection & False Positive Rate</span>
-            </div>
-            <table class="ids-table" id="metrics-table">
-              <thead>
-                <tr>
-                  <th>Category</th>
-                  <th>Flows</th>
-                  <th>TP</th>
-                  <th>FP</th>
-                  <th>TN</th>
-                  <th>FN</th>
-                  <th>Misclassified</th>
-                  <th>Precision</th>
-                  <th>Recall</th>
-                  <th>F1 Score</th>
-                  <th>FAR</th>
-                </tr>
-              </thead>
-              <tbody id="metrics-table-body">
-                <!-- Populated via JS -->
-              </tbody>
-            </table>
-          </div>
-
-          <!-- TAB 3: CONFUSION MATRIX -->
-          <div class="tab-content" id="tab-confusion">
-            <div class="feed-date-header">
-              <span style="font-size:14px; font-weight:800; color:#1e293b;">Multi-Class Detection Matrix</span>
-            </div>
-            <p style="font-size:12px; color:#6b7280; margin-bottom:12px;">
-              Includes the explicit <strong>"No Rule Matched (Missed)"</strong> column for unflagged zero-day attacks.
-            </p>
-            <div id="confusion-matrix-container" style="overflow-x:auto;">
-              <!-- Matrix Table -->
-            </div>
-          </div>
-
-          <!-- TAB 4: RULES & ATTRIBUTION -->
+          <!-- TAB 4: RULES & INTELLIGENCE -->
           <div class="tab-content" id="tab-rules">
             <div class="feed-date-header">
-              <span style="font-size:14px; font-weight:800; color:#1e293b;">Active Rule Attribution & Fidelity</span>
+              <span style="font-size:14px; font-weight:800; color:#1e293b;">Active Suricata Detection Rules Base</span>
             </div>
-            <table class="ids-table" id="attribution-table">
-              <thead>
-                <tr>
-                  <th>SID</th>
-                  <th>Signature Name</th>
-                  <th>TP</th>
-                  <th>FP</th>
-                  <th>Precision</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="attribution-table-body">
-                <!-- Populated via JS -->
-              </tbody>
-            </table>
+            <div id="rules-list-container" style="display:flex; flex-direction:column; gap:10px;">
+              <!-- Dynamically populated rules list -->
+            </div>
           </div>
 
           <!-- TAB 5: ATTACK SIMULATOR -->
@@ -251,7 +369,7 @@
             <div class="feed-date-header">
               <span style="font-size:14px; font-weight:800; color:#1e293b;">Replay Attack Injection Simulator</span>
             </div>
-            <p style="font-size:12px; color:#6b7280;">Constructs real network packets and appends them to the PCAP queue.</p>
+            <p style="font-size:12px; color:#6b7280;">Constructs real Scapy network packets and injects them into the live queue.</p>
             <div style="background:#f8fafc; padding:20px; border-radius:16px; border:1px solid #e2e8f0; display:flex; flex-direction:column; gap:14px; margin-top:10px;">
               <div>
                 <label style="font-size:12px; font-weight:700; color:#374151;">Attack Pattern</label>
@@ -289,7 +407,7 @@
             </div>
           </div>
 
-          <!-- BOUNDED LIVE NOTIFICATION PANEL (NO OVERLAY/TOAST) -->
+          <!-- BOUNDED LIVE NOTIFICATION PANEL -->
           <div class="bounded-stream-panel">
             <div class="bounded-stream-header">
               <span style="display:flex; align-items:center; gap:6px;">
@@ -297,7 +415,7 @@
                   <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                   <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                 </svg>
-                Live Event Ingestion
+                Live Event Stream
               </span>
               <span style="font-size:10px; color:#10b981; font-weight:700;">● STREAMING</span>
             </div>
@@ -324,3 +442,4 @@
   <script src="/static/app.js"></script>
 </body>
 </html>
+

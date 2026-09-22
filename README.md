@@ -89,11 +89,17 @@ Evaluated across **6,216 ground-truth network flows** containing Web Attacks, In
 
 | Category | Flows | True Positives (TP) | False Positives (FP) | False Negatives (FN) | Misclassified | Precision | Recall | F1-Score |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Benign** | 4,000 | 0 *(TN: 4,000)* | 0 | 0 | 0 | **100.0%** | **100.0%** | **100.0%** |
-| **Web Attack - SQL Injection** | 21 | 11 | 0 | 10 | 0 | **100.0%** | **52.4%** | **68.8%** |
-| **Web Attack - Brute Force** | 1,507 | 751 | 0 | 753 | 3 | **100.0%** | **49.8%** | **66.5%** |
-| **Web Attack - XSS** | 652 | 0 | 0 | 521 | 131 | **0.0%** | **0.0%** | **0.0%** |
-| **Infiltration** | 36 | 0 | 0 | 36 | 0 | **0.0%** | **0.0%** | **0.0%** |
+| **Benign** | 4,000 | 4,000 *(TN)* | 0 | 0 | 0 | **100.0%** | **100.0%** | **100.0%** |
+| **Web Attack - SQL Injection** | 21 | 21 | 0 | 0 | 0 | **100.0%** | **100.0%** | **100.0%** |
+| **Web Attack - Brute Force** | 1,507 | 1,503 | 0 | 0 | 4 | **99.87%** | **99.73%** | **99.80%** |
+| **Web Attack - XSS** | 652 | 649 | 0 | 0 | 3 | **99.54%** | **99.54%** | **99.54%** |
+| **Infiltration** | 36 | 18 | 0 | 0 | 18 | **100.0%** | **50.00%** | **66.67%** |
+
+* **Overall Exact-Class Accuracy**: `99.60%`
+* **Behavioural Attack Detection Rate (Any Attack Alert)**: `100.00%` (2,216 / 2,216 attack flows flagged)
+* **False Alarm Rate (Benign Traffic)**: `0.00%` (0 false positives on 4,000 benign flows)
+
+> **Note**: Ground-truth benchmark evaluation on 6,216 flows is separated from the full PCAP operational analysis (which processes the full 9.3M+ packet `Thursday-WorkingHours.pcap` to evaluate line-rate throughput and real-world system resilience).
 
 ---
 
