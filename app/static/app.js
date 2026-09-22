@@ -240,6 +240,47 @@ async function loadAlerts() {
   }
 }
 
+// Professional Custom SVG Icon Helper Map
+function getCategoryIconSvg(categoryKey) {
+  const iconMap = {
+    sqli: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+    </svg>`,
+    xss: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="16 18 22 12 16 6"></polyline>
+      <polyline points="8 6 2 12 8 18"></polyline>
+    </svg>`,
+    bruteforce: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+    </svg>`,
+    infiltration: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>`,
+    portscan: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      <line x1="11" y1="8" x2="11" y2="14"></line>
+      <line x1="8" y1="11" x2="14" y2="11"></line>
+    </svg>`,
+    dos: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+      <line x1="12" y1="9" x2="12" y2="13"></line>
+      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+    </svg>`,
+    generic: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>`
+  };
+  return iconMap[categoryKey] || iconMap.generic;
+}
+
 // Load Deduplicated Alerts Feed
 async function loadAlerts() {
   try {
@@ -251,12 +292,12 @@ async function loadAlerts() {
 
     if (!data.grouped_alerts || data.grouped_alerts.length === 0) {
       if (countSummary) countSummary.innerText = "0 alerts";
-      feedList.innerHTML = `<div style="text-align:center; padding:30px; color:#9ca3af;">No alerts in database. Click "Run Dataset Replay" to evaluate PCAP.</div>`;
+      feedList.innerHTML = `<div style="text-align:center; padding:30px; color:#9ca3af;">No alerts in database. Click "Execute PCAP Ingestion" to evaluate.</div>`;
       return;
     }
 
     if (countSummary) {
-      countSummary.innerText = `${(data.total || 0).toLocaleString()} total alerts (${data.grouped_alerts.length} distinct groups)`;
+      countSummary.innerText = `${(data.total || 0).toLocaleString()} alerts committed (${data.grouped_alerts.length} signature clusters)`;
     }
 
     data.grouped_alerts.forEach((g, idx) => {
@@ -264,24 +305,24 @@ async function loadAlerts() {
       item.className = "alert-item";
       
       let iconClass = "sqli";
-      let iconSymbol = "💉";
       const sigLower = g.signature.toLowerCase();
-      if (sigLower.includes("xss")) { iconClass = "xss"; iconSymbol = "⚡"; }
-      else if (sigLower.includes("brute") || sigLower.includes("login")) { iconClass = "bruteforce"; iconSymbol = "🔑"; }
-      else if (sigLower.includes("infiltration") || sigLower.includes("smb")) { iconClass = "infiltration"; iconSymbol = "🛡️"; }
-      else if (sigLower.includes("scan")) { iconClass = "portscan"; iconSymbol = "🔍"; }
-      else if (sigLower.includes("dos") || sigLower.includes("flood")) { iconClass = "dos"; iconSymbol = "🔥"; }
+      if (sigLower.includes("xss")) { iconClass = "xss"; }
+      else if (sigLower.includes("brute") || sigLower.includes("login")) { iconClass = "bruteforce"; }
+      else if (sigLower.includes("infiltration") || sigLower.includes("smb")) { iconClass = "infiltration"; }
+      else if (sigLower.includes("scan")) { iconClass = "portscan"; }
+      else if (sigLower.includes("dos") || sigLower.includes("flood")) { iconClass = "dos"; }
 
+      const iconSvg = getCategoryIconSvg(iconClass);
       const sevClass = g.severity === 1 ? "sev-1" : (g.severity === 2 ? "sev-2" : "sev-3");
-      const sevLabel = g.severity === 1 ? "HIGH (Sev 1)" : (g.severity === 2 ? "MED (Sev 2)" : "LOW (Sev 3)");
+      const sevLabel = g.severity === 1 ? "CRITICAL" : (g.severity === 2 ? "WARNING" : "INFORMATIONAL");
 
-      const countBadge = g.count > 1 ? `<span class="grouped-badge">🔥 ${g.count.toLocaleString()} occurrences</span>` : "";
+      const countBadge = g.count > 1 ? `<span class="grouped-badge">${g.count.toLocaleString()} triggers</span>` : "";
 
       let instancesHtml = "";
       if (g.count > 1) {
         instancesHtml = `
           <button class="group-toggle-btn" id="btn-toggle-${idx}">
-            ▼ SID ${g.signature_id} fired ${g.count} times — click to expand individual instances (${g.count})
+            ▼ SID ${g.signature_id} fired ${g.count} times — expand distinct flow records (${g.count})
           </button>
           <div class="instances-container" id="inst-container-${idx}">
             ${g.instances.slice(0, 15).map(inst => `
@@ -290,7 +331,6 @@ async function loadAlerts() {
                 <div style="color:#64748b;">${inst.timestamp}</div>
               </div>
             `).join("")}
-            ${g.count > 15 ? `<div style="font-size:11px; color:#94a3b8; text-align:center;">+ ${g.count - 15} more instances in this group</div>` : ""}
           </div>
         `;
       }
@@ -298,7 +338,7 @@ async function loadAlerts() {
       item.innerHTML = `
         <div class="alert-main-row">
           <div class="alert-left">
-            <div class="cat-icon ${iconClass}">${iconSymbol}</div>
+            <div class="cat-icon ${iconClass}">${iconSvg}</div>
             <div>
               <div class="alert-info-title">${g.signature} ${countBadge}</div>
               <div class="alert-info-sub">${g.last_seen} · <code>${g.sample_src} ➔ ${g.sample_dst}</code> (${g.sample_proto})</div>
@@ -307,7 +347,6 @@ async function loadAlerts() {
           <div class="alert-right">
             <span class="severity-pill ${sevClass}">${sevLabel}</span>
           </div>
-        </div>
         <div class="explain-box">
           <strong>Deterministic Proof:</strong> ${g.sample_reason}<br>
           <span style="color:#64748b; margin-top:4px; display:inline-block;">Observed: ${g.sample_pkts} packets · ${g.sample_bytes} bytes</span>
@@ -330,7 +369,7 @@ async function loadAlerts() {
             if (instBox.classList.contains("open")) {
               toggleBtn.innerHTML = `▲ Collapse ${g.count} instances`;
             } else {
-              toggleBtn.innerHTML = `▼ SID ${g.signature_id} fired ${g.count} times — click to expand individual instances (${g.count})`;
+              toggleBtn.innerHTML = `▼ SID ${g.signature_id} fired ${g.count} times — expand distinct flow records (${g.count})`;
             }
           });
         }
@@ -539,11 +578,18 @@ function appendBoundedNotification(alertData) {
     streamList.innerHTML = "";
   }
 
+  const isCritical = alertData.severity === 1;
+  const sevClass = isCritical ? "sev-1" : (alertData.severity === 2 ? "sev-2" : "");
+  const badgeSvg = isCritical ? 
+    `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>` :
+    `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+
   const item = document.createElement("div");
-  const sevClass = alertData.severity === 1 ? "sev-1" : (alertData.severity === 2 ? "sev-2" : "");
   item.className = `bounded-stream-item ${sevClass}`;
   item.innerHTML = `
-    <span style="font-size:14px;">${alertData.severity === 1 ? '🚨' : '⚠️'}</span>
+    <div style="display:flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:6px; background:rgba(0,0,0,0.04); flex-shrink:0;">
+      ${badgeSvg}
+    </div>
     <div class="bounded-stream-info">
       <div class="bounded-stream-sig">${alertData.signature}</div>
       <div class="bounded-stream-time">${alertData.src_ip} ➔ ${alertData.dest_ip} · ${new Date().toLocaleTimeString()}</div>

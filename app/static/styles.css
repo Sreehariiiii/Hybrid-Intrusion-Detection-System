@@ -117,12 +117,17 @@ body {
   gap: 12px;
   padding: 12px 14px;
   border-radius: 12px;
-  color: #8e8e93;
-  font-size: 14px;
+  color: #94a3b8;
+  font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
+}
+
+.nav-icon {
+  flex-shrink: 0;
+  transition: transform 0.2s ease, stroke 0.2s ease;
 }
 
 .nav-item:hover, .nav-item.active {
@@ -132,6 +137,13 @@ body {
 
 .nav-item.active {
   font-weight: 700;
+  background: rgba(37, 99, 235, 0.18);
+  color: #60a5fa;
+  border: 1px solid rgba(96, 165, 250, 0.2);
+}
+
+.nav-item.active .nav-icon {
+  stroke: #60a5fa;
 }
 
 .sidebar-bottom-btn {
